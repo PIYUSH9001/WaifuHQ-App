@@ -3,11 +3,11 @@ import { StyleSheet, Text, View, TextInput, Image, ScrollView, FlatList, Touchab
 const SearchScreen = () => {
     const [result, setResult] = useState([]);
     const FetchResult = async (input) => {
-        const url = `https://api.jikan.moe/v4/anime?q=${input}`
+        const url = `https://api-anime-rouge.vercel.app/aniwatch/search?keyword=${input}`
         let response = await fetch(url);
         response = await response.json();
-        if (response && response.data) {
-            setResult(response.data.slice(0,10));
+        if (response && response.animes) {
+            setResult(response.animes.slice(0,10));
         }
     }
     return (
@@ -22,13 +22,13 @@ const SearchScreen = () => {
                     {
                         result.map(element =>
                         <TouchableNativeFeedback onPress={() => {
-                            navigation.navigate("AnimeScreen",{ShowTitle,ShowDescription,ShowImage,ShowID});
+                            navigation.navigate("AnimeScreen",{ShowID});
                         }}
                         >
 
                          <View style={styles.resultItem} key={element.mal_id}>
-                            <Image source={{uri:element.images.jpg.large_image_url}} style={styles.resultImage}/>
-                            <Text style={styles.resultTitle}>{element.title_english}
+                            <Image source={{uri:element.img}} style={styles.resultImage}/>
+                            <Text style={styles.resultTitle}>{element.name}
                             </Text>
                         </View>
                         </TouchableNativeFeedback>

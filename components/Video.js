@@ -1,5 +1,5 @@
 import React, { createRef, useEffect, useState } from "react";
-import { Text, View, StyleSheet, TouchableNativeFeedback, Image, TouchableOpacity, Dimensions } from "react-native";
+import { Text, View, StyleSheet, TouchableNativeFeedback, Image, TouchableOpacity, Dimensions, ActivityIndicator } from "react-native";
 import PauseIcon from '../Images/pauseIcon.png';
 import PlayIcon from '../Images/playIcon.png';
 import FulllScreenIcon from '../Images/FullScreenIcon.png';
@@ -13,8 +13,8 @@ const height = Dimensions.get('window').width;
 const width = Dimensions.get('window').height;
 
 const VideoScreen = (props) => {
-    const {ShowID} = props.route.params;
-    const url = `https://api.animethemes.moe/anime?filter[has]=resources&filter[site]=MyAnimeList&filter[external_id]=${ShowID}&include=animethemes.animethemeentries.videos`;
+    const {EpisodeID} = props.route.params;
+    const url = `https://api-anime-rouge.vercel.app/aniwatch/episode-srcs?id=${EpisodeID}&server=vidstreaming&category=sub`;
     const [VideoControlIcon, setVideoControlIcon] = useState(PauseIcon);
     const [paused, setPaused] = useState(false)
     const [videoURL, setVideoURL] = useState(null);
@@ -42,15 +42,19 @@ const VideoScreen = (props) => {
     const getVideoURL = async () => {
         let response = await fetch(url);
         response = await response.json();
-        setVideoURL(response.anime[0].animethemes[0].animethemeentries[0].videos[0].link);
+        setVideoURL(response.sources[0].url);
     }
     useEffect(() => {
         getVideoURL();
+        console.warn("Hello")
     }, []);
+    useEffect(()=>{
+        console.warn(videoURL)
+    },[videoURL])
     return (
         <>
             {
-                videoURL &&
+                videoURL ?
                 <View style={styles.container}>
                     <Video
                     ref={VideoRef}
@@ -63,6 +67,10 @@ const VideoScreen = (props) => {
                     onFullscreenPlayerDidDismiss={onFullscreenPlayerWillDismiss}
                     />
                 </View>
+                :
+                <View style={styles.container}>
+                    <ActivityIndicator size={50} color={'white'} />
+                </View>
             }
         </>
     )
@@ -71,7 +79,7 @@ const VideoScreen = (props) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 0,
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'black'

@@ -11,10 +11,10 @@ const HomeScreen = (props) => {
     })
     const [AiringShows,setAiringShows] = useState(null);
     const Fetchdata = async () => {
-        const url = "https://api.jikan.moe/v4/seasons/now";
+        const url = "https://api-anime-rouge.vercel.app/aniwatch/";
         let response = await fetch(url);
         response = await response.json();
-        setAiringShows(response.data);
+        setAiringShows(response.trendingAnimes);
     }
     useEffect(() => {
         Fetchdata();
@@ -23,7 +23,7 @@ const HomeScreen = (props) => {
         <View style={AiringShows?{backgroundColor:'black',paddingBottom:5}:styles.loading}>
         {
             AiringShows?
-            <FlatList data={AiringShows} renderItem={({item}) => <Card ShowImage={item.images.jpg.large_image_url} ShowTitle={item.title_english} ShowDescription={item.synopsis} ShowID={item.mal_id} navigation={props.navigation}/>} />
+            <FlatList data={AiringShows} renderItem={({item}) => <Card ShowImage={item.img} ShowTitle={item.name} ShowID={item.id} navigation={props.navigation}/>} />
             :
             <ActivityIndicator color={'white'}  size={50}/>
         }

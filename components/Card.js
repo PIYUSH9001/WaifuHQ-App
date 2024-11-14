@@ -4,6 +4,7 @@ import LinearGradient from "react-native-linear-gradient";
 import UserButton from "./UserButton";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedAnime } from "./redux/animeslice";
+import { Screen } from "react-native-screens";
 
 
 const Card = ({ShowImage,ShowTitle,ShowDescription,ShowID,navigation}) => {
@@ -57,7 +58,12 @@ const Card = ({ShowImage,ShowTitle,ShowDescription,ShowID,navigation}) => {
     })
     return (
         <TouchableNativeFeedback useForeground={true} onPress={() => {
-            navigation.navigate("AnimeScreen",{ShowTitle,ShowDescription,ShowImage,ShowID});
+            navigation.navigate("AnimeNavigation",{
+                screen:'AnimeScreen',
+                params:{
+                    ShowTitle,ShowDescription,ShowImage,ShowID,
+                }
+            });
         }}>
             <View style={styles.container}>
                 <ImageBackground source={{ uri: ShowImage}} style={styles.showImage}>
@@ -69,17 +75,12 @@ const Card = ({ShowImage,ShowTitle,ShowDescription,ShowID,navigation}) => {
                                 <Text style={styles.showTitle}>
                                     {ShowTitle}
                                 </Text>
-                                <Text style={styles.showDescription}>
-                                    {
-                                    ShowDescription.substring(0,130) + "..."
-                                    }
-                                </Text>
                                 <View style={styles.buttonsTab}>
-                                <CardButton btnBackground={'green'} btnTitle={'Watch opening'} color={'white'} func={() =>{
+                                <CardButton btnBackground={'green'} btnTitle={'Watch now'} color={'white'} func={() =>{
                                     navigation.navigate("Video",{ShowID});
                                 } 
                                 }/>
-                                <CardButton btnBackground={'white'} btnTitle={'Watch ending'} color={'black'}/>
+                                <CardButton btnBackground={'white'} btnTitle={'Save to favourites'} color={'black'}/>
                                 </View>
                             </View>
                         </View>

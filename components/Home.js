@@ -10,11 +10,25 @@ const HomeScreen = (props) => {
             justifyContent:'center', backgroundColor:'black'},
     })
     const [AiringShows,setAiringShows] = useState(null);
+    const {key} = props.route.params;
     const Fetchdata = async () => {
         const url = "https://api-anime-rouge.vercel.app/aniwatch/";
         let response = await fetch(url);
         response = await response.json();
-        setAiringShows(response.trendingAnimes);
+        switch (key) {
+            case "Trending":
+                setAiringShows(response.trendingAnimes);
+                break;
+            case "Latest episodes":
+                setAiringShows(response.latestEpisodes);
+                break;
+            case "Most popular":
+                setAiringShows(response.featuredAnimes.mostPopularAnimes);
+                break;
+            default:
+                // setAiringShows(response.trendingAnimes);
+                break;
+        }
     }
     useEffect(() => {
         Fetchdata();

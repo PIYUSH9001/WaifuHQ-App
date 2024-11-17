@@ -46,11 +46,7 @@ const VideoScreen = (props) => {
     }
     useEffect(() => {
         getVideoURL();
-        console.warn("Hello")
     }, []);
-    useEffect(()=>{
-        console.warn(videoURL)
-    },[videoURL])
     return (
         <>
             {

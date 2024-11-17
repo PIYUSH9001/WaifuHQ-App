@@ -8,7 +8,6 @@ import { Screen } from "react-native-screens";
 
 
 const Card = ({ShowImage,ShowTitle,ShowDescription,ShowID,navigation}) => {
-    
     const styles = StyleSheet.create({
         container: {
             height: 350,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, TextInput, Image, ScrollView, FlatList, TouchableNativeFeedback } from "react-native";
-const SearchScreen = () => {
+const SearchScreen = ({navigation}) => {
     const [result, setResult] = useState([]);
     const FetchResult = async (input) => {
         const url = `https://api-anime-rouge.vercel.app/aniwatch/search?keyword=${input}`
@@ -22,11 +22,17 @@ const SearchScreen = () => {
                     {
                         result.map(element =>
                         <TouchableNativeFeedback onPress={() => {
-                            navigation.navigate("AnimeScreen",{ShowID});
+                            navigation.navigate("AnimeNavigation",{
+                                screen:"AnimeScreen",
+                                params:{
+                                    ShowID:element.id
+                                }
+                            })
                         }}
+                        key={element.id}
                         >
 
-                         <View style={styles.resultItem} key={element.mal_id}>
+                         <View style={styles.resultItem} >
                             <Image source={{uri:element.img}} style={styles.resultImage}/>
                             <Text style={styles.resultTitle}>{element.name}
                             </Text>

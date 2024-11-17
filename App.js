@@ -6,7 +6,9 @@ import ShowCard from "./components/Card";
 import HomeScreen from "./components/Home";
 import VideoScreen from "./components/Video";
 import SearchScreen from "./components/Search";
-import HomeNavigtion from "./components/HomeNavigation";
+import HomeNavigtion from "./components/HomeToAnimeNavigation";
+import { HomeTabProvider } from "./components/context/context";
+
 
 
 // const url = `https://api.animethemes.moe/anime?filter[has]=resources&filter[site]=MyAnimeList&filter[external_id]=${AnimeID}&include=animethemes.animethemeentries.videos`
@@ -15,7 +17,10 @@ const App = () => {
     return (
       // <LoginScreen/>
       // <SearchScreen/>
-      <Navigation/>
+      <HomeTabProvider>
+        <Navigation/>
+      </HomeTabProvider>
+      
       // <HomeNavigtion/>
       // <VideoScreen/>
       // <HomeScreen/>

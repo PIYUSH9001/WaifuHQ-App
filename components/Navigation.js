@@ -4,12 +4,14 @@ import { Image, Text, View } from "react-native";
 import LoginScreen from "./Login";
 import HomeScreen from "./Home";
 import HomeIcon from "../Images/home.png";
-import HomeNavigtion from "./HomeNavigation";
+import HomeToAnimeNavigtion from "./HomeToAnimeNavigation";
 import SearchScreen from "./Search";
 import AnimeScreen from "./Anime";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import Icon from 'react-native-vector-icons/Ionicons';
 import VideoScreen from "./Video";
+import HomeNavigation from "./HomeNavigation";
+import SearchNavigation from "./SearchNavigation";
 
 const MyDrawer = createDrawerNavigator();
 const Navigation = () => {
@@ -31,16 +33,20 @@ const Navigation = () => {
                     fontSize: 20,
                     fontWeight: 'bold',
                 },
+                drawerContentStyle:{
+                    borderRightColor:'white',
+                    borderRightWidth:2
+                },
                 drawerActiveBackgroundColor: 'white',
                 drawerActiveTintColor: 'black',
                 drawerInactiveTintColor: 'white'
             }}>
-                <MyDrawer.Screen component={HomeNavigtion} name="Home" options={{
+                <MyDrawer.Screen component={HomeNavigation} name="Home" options={{
                     drawerIcon:({focused}) => (
                         <Icon name="home-outline" size={35} color={focused?'black':'white'} />
                     )
                 }} />
-                <MyDrawer.Screen component={SearchScreen} name="Search" options={{
+                <MyDrawer.Screen component={SearchNavigation} name="Search" options={{
                     drawerIcon:({focused}) => (
                         <Icon name="search" size={35} color={focused?'black':'white'} />
                     )

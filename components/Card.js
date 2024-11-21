@@ -71,7 +71,7 @@ const Card = ({ShowImage,ShowTitle,ShowDescription,ShowID,navigation}) => {
                         style={{ height: '100%', width: '100%' }}>
                         <View style={styles.titlearea}>
                             <View style={styles.titleBar}>
-                                <Text style={styles.showTitle}>
+                                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.showTitle}>
                                     {ShowTitle}
                                 </Text>
                                 <View style={styles.buttonsTab}>
@@ -79,7 +79,7 @@ const Card = ({ShowImage,ShowTitle,ShowDescription,ShowID,navigation}) => {
                                     navigation.navigate("Video",{ShowID});
                                 } 
                                 }/>
-                                <CardButton btnBackground={'white'} btnTitle={'Save to favourites'} color={'black'}/>
+                                {/* <CardButton btnBackground={'white'} btnTitle={'Save to favourites'} color={'black'}/> */}
                                 </View>
                             </View>
                         </View>

@@ -15,6 +15,7 @@ const HomeNavigation = () => {
                 backgroundColor:'black',
                 display:showTab?'flex':'none',
             },
+            swipeEnabled:showTab?true:false,
             tabBarLabelStyle:{
                 fontSize:20,
                 // color:'white',

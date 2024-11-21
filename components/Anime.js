@@ -6,6 +6,9 @@ import { Picker } from "@react-native-picker/picker";
 import WaveringPlaceholder from "./Placeholder";
 import VideoScreen from "./Video";
 import BackgroundIMG from '../Images/backgroundImage.jpg'
+import Icon from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { HomeTabContext } from "./context/context";
 const AnimeScreen = (props) => {
     const { ShowID } = props.route.params;
     const [AnimeDetails, setAnimeDetails] = useState(null);
@@ -26,37 +29,45 @@ const AnimeScreen = (props) => {
     }
     useEffect(() => {
         getAnimeDetails();
-        getAnimeEpisodes()
+        getAnimeEpisodes();
     }, []);
     return (
         <ImageBackground source={BackgroundIMG} style={styles2.container}>
             <View style={styles2.animeDetailsTab}>
                 {
-                    AnimeDetails &&
-                    <Image source={{ uri: AnimeDetails.img }} style={styles2.animeImage} />
+                    AnimeDetails ?
+                    <>
+                        <Image source={{ uri: AnimeDetails.img }} style={styles2.animeImage} />
+                        <AddToFavouriteBtn AnimeID={ShowID} AnimeName={AnimeDetails.name} AnimeIMG={AnimeDetails.img} />
+                    </>
+                    :
+                    <WaveringPlaceholder height={'100%'} width={'45%'}/>
                 }
                 <ScrollView showsVerticalScrollIndicator={false} style={styles2.animeSynopsisTab}>
                     {
-                        AnimeDetails && <Text style={styles2.animeTitle}>{AnimeDetails.name}</Text>
+                        AnimeDetails ? <Text style={styles2.animeTitle}>{AnimeDetails.name}</Text>:
+                        <WaveringPlaceholder height={25}/>
                     }
                     {
-                        AnimeDetails && <Text style={styles2.animeSynopsis}>{AnimeDetails.description}</Text>
+                        AnimeDetails ? <Text style={styles2.animeSynopsis}>{AnimeDetails.description}</Text>:
+                        <WaveringPlaceholder height={15} width={150}/>
                     }
 
                 </ScrollView>
             </View>
             <View style={styles2.animeEpisodesTab}>
+                <Text style={{color:'white',textAlign:'left',width:'90%',padding:2,fontSize:20,fontWeight:'bold'}}>Episodes:</Text>
                 {
                     AnimeEpisodes ?
                         <FlatList
                             style={styles2.episodeList}
                             data={AnimeEpisodes.episodes}
-                            renderItem={({ item }) => <Episodes title={item.name} EpisodeID={item.episodeId} EpisodeCount={item.episodeNo} navigation={props.navigation}/>}
+                            renderItem={({ item }) => <Episodes title={item.name} EpisodeID={item.episodeId} EpisodeCount={item.episodeNo} navigation={props.navigation} />}
                         />
                         :
-                        <View style={{flexDirection:'row',height:'100%',width:'100%',alignItems:'center',justifyContent:'center'}}>
-                            <ActivityIndicator size={50} color={'white'}/>
-                            <Text style={{ fontSize: 20, color: 'white',margin:15 }}>Loading...</Text>
+                        <View style={{ flexDirection: 'row', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                            <ActivityIndicator size={50} color={'white'} />
+                            <Text style={{ fontSize: 20, color: 'white', margin: 15 }}>Loading...</Text>
                         </View>
                 }
             </View>
@@ -64,7 +75,61 @@ const AnimeScreen = (props) => {
     )
 }
 
-const Episodes = ({ title ,EpisodeID,EpisodeCount,navigation}) => {
+const AddToFavouriteBtn = ({ AnimeID, AnimeName, AnimeIMG }) => {
+    const [isAddedToFavourites, setIsAddedToFavourites] = useState(false);
+    const {AddToFavourite,FavouriteArray,RemoveFromFavourite} = useContext(HomeTabContext);
+    useEffect(()=>{
+        if(FavouriteArray){
+            const FindAnimeInFavourites = FavouriteArray.find(Anime => Anime.AnimeID === AnimeID);
+            if(FindAnimeInFavourites){
+                setIsAddedToFavourites(true);
+            }
+        }
+    },[])
+    const StoreToFavourites = async () => {
+        try {
+            const AnimeData = {
+                AnimeID,
+                AnimeName,
+                AnimeIMG
+            }
+            await AddToFavourite(AnimeData);
+        }
+        catch (error) {
+            console.warn(error)
+        }
+    }
+    const DeleteFromFavourite = async () => {
+        try{
+            const AnimeData = {
+                AnimeID,
+                AnimeName,
+                AnimeIMG
+            }
+            await RemoveFromFavourite(AnimeData.AnimeID);
+        }
+        catch (error) {
+            console.warn(error)
+        }
+    }
+    return (
+        <TouchableNativeFeedback onPress={() => {
+            if (isAddedToFavourites === false) {
+                StoreToFavourites();
+            }
+            else{
+                DeleteFromFavourite();
+            }
+            setIsAddedToFavourites(!isAddedToFavourites);
+        }}>
+            <View style={{ height: 50, width: 50, position: 'absolute', top: '8%', left: '4%', borderRadius: 25, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center' }}>
+                <Icon name={`heart${!isAddedToFavourites ? '-outline' : ''}`} size={36} color="white" />
+            </View>
+        </TouchableNativeFeedback>
+    )
+}
+
+const Episodes = ({ title, EpisodeID, EpisodeCount, navigation }) => {
     const styles = StyleSheet.create({
         EpisodeStyle: {
             height: 50,
@@ -74,29 +139,36 @@ const Episodes = ({ title ,EpisodeID,EpisodeCount,navigation}) => {
             marginBottom: 5,
             backgroundColor: '#2b2a2a',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'space-evenly',
             flexDirection: 'row',
-            // borderRadius: 30,
-            // padding: 5,
         },
         EpisodesTitle: {
             color: 'white',
+            width: '70%',
             fontSize: 20,
-            textAlign: 'center'
+            textAlign: 'center',
+            textAlignVertical: 'center',
         },
-        EpisodeCount:{
-            color:'white',
-            fontSize:35,
-            width:'20%',
+        EpisodeCount: {
+            textAlignVertical: 'center',
+            color: 'white',
+            fontSize: 20,
+            width: '15%',
+            textAlign: 'center',
+            backgroundColor: 'grey',
+            height: '100%',
+            fontWeight: 'bold'
         }
     })
     return (
-        <TouchableNativeFeedback onPress={()=>{
-            navigation.navigate("VideoScreen",{EpisodeID})
-        }}>
+        <TouchableNativeFeedback onPress={() => {
+            navigation.navigate("VideoScreen", { EpisodeID })
+        }}
+            background={TouchableNativeFeedback.Ripple('black', false)}
+        >
             <View style={styles.EpisodeStyle}>
-                <Text style={styles.EpisodeCount}>{EpisodeCount}</Text>
-                <Text style={styles.EpisodesTitle}>
+                <Text style={styles.EpisodeCount}>EP {EpisodeCount}</Text>
+                <Text ellipsizeMode="tail" numberOfLines={2} style={styles.EpisodesTitle}>
                     {title}
                 </Text>
             </View>
@@ -180,14 +252,13 @@ const styles2 = StyleSheet.create({
         textAlign: 'center',
     },
     animeEpisodesTab: {
-        flexDirection: 'row',
-        height: '45%',
+        flexDirection: 'column',
+        height: '40%',
         width: '100%',
         backgroundColor: 'rgba(0,0,0,0.4)',
         alignItems: 'center',
         justifyContent: 'space-around',
         borderRadius: 10,
-
     },
     episodeList: {
         minHeight: '90%',

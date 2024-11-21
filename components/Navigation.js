@@ -12,6 +12,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import VideoScreen from "./Video";
 import HomeNavigation from "./HomeNavigation";
 import SearchNavigation from "./SearchNavigation";
+import GenreScreen from "./Genre";
+import FavouriteScreen from "./Favourite";
+import FavouriteNavigation from "./FavouriteNavigation";
 
 const MyDrawer = createDrawerNavigator();
 const Navigation = () => {
@@ -43,12 +46,17 @@ const Navigation = () => {
             }}>
                 <MyDrawer.Screen component={HomeNavigation} name="Home" options={{
                     drawerIcon:({focused}) => (
-                        <Icon name="home-outline" size={35} color={focused?'black':'white'} />
+                        <Icon name="home" size={35} color={focused?'black':'white'} />
                     )
                 }} />
-                <MyDrawer.Screen component={SearchNavigation} name="Search" options={{
+                    <MyDrawer.Screen component={SearchNavigation} name="Search" options={{
+                        drawerIcon:({focused}) => (
+                            <Icon name="search" size={35} color={focused?'black':'white'} />
+                        )
+                    }} />
+                <MyDrawer.Screen component={FavouriteNavigation} name="Favourites" options={{
                     drawerIcon:({focused}) => (
-                        <Icon name="search" size={35} color={focused?'black':'white'} />
+                        <Icon name="heart" size={35} color={focused?'black':'white'} />
                     )
                 }} />
                 {/* <MyDrawer.Screen component={LoginScreen} name="Favourites" options={{

@@ -14,6 +14,7 @@ const FavouriteNavigation = () => {
         <Stack.Navigator screenOptions={{
             headerShown:false,
             cardStyleInterpolator:fadeTransition,
+            presentation:'transparentModal',
         }}>
             <Stack.Screen component={FavouriteScreen} name="FavouriteScreen" />
             <Stack.Screen component={AnimeNavigation} name="AnimeNavigation" />

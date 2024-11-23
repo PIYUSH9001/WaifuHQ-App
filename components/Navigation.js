@@ -21,6 +21,7 @@ const Navigation = () => {
     return (
         <NavigationContainer>
             <MyDrawer.Navigator screenOptions={{
+                headerShown:false,
                 drawerStyle: {
                     backgroundColor: 'black',
                     width: '65%'
@@ -40,6 +41,7 @@ const Navigation = () => {
                     borderRightColor:'white',
                     borderRightWidth:2
                 },
+                presentation:'transparentModal',
                 drawerActiveBackgroundColor: 'white',
                 drawerActiveTintColor: 'black',
                 drawerInactiveTintColor: 'white'

@@ -5,40 +5,30 @@ import PlayIcon from '../Images/playIcon.png';
 import FulllScreenIcon from '../Images/FullScreenIcon.png';
 import Video from "react-native-video";
 import Orientation from "react-native-orientation-locker";
+import Slider from "@react-native-community/slider";
 
-const windowHeight = Dimensions.get('window').width * (9/12);
+const windowHeight = Dimensions.get('window').width * (9 / 12);
 const windowWidth = Dimensions.get('window').width;
 
 const height = Dimensions.get('window').width;
 const width = Dimensions.get('window').height;
 
 const VideoScreen = (props) => {
-    const {EpisodeID} = props.route.params;
+    const { EpisodeID } = props.route.params;
     const url = `https://api-anime-rouge.vercel.app/aniwatch/episode-srcs?id=${EpisodeID}&server=vidstreaming&category=sub`;
-    const [VideoControlIcon, setVideoControlIcon] = useState(PauseIcon);
     const [paused, setPaused] = useState(false)
     const [videoURL, setVideoURL] = useState(null);
-    const [isFullScreen,setIsFullScreen] = useState(false);
+    const [isFullScreen, setIsFullScreen] = useState(false);
+    const [progress, setProgress] = useState(null);
+    const [clicked, setClicked] = useState(false);
     const VideoRef = React.createRef();
-
-    const onFullscreenPlayerWillPresent = () => {
-        Orientation.lockToLandscape();
-        setIsFullScreen(true);
-    }
-    const onFullscreenPlayerWillDismiss = () => {
-        Orientation.lockToPortrait();
-        setIsFullScreen(false);
+    const format = seconds => {
+        let mins = parseInt(seconds / 60).toString().padStart(2, '0');
+        let secs = (Math.trunc(seconds) % 60).toString().padStart(2, '0');
+        return `${mins}:${secs}`;
     }
     
-    const togglePlayPause = () => {
-        setPaused(!paused);
-        if (VideoControlIcon === PauseIcon) {
-            setVideoControlIcon(PlayIcon);
-        }
-        else {
-            setVideoControlIcon(PauseIcon);
-        }
-    };
+
     const getVideoURL = async () => {
         let response = await fetch(url);
         response = await response.json();
@@ -51,22 +41,95 @@ const VideoScreen = (props) => {
         <>
             {
                 videoURL ?
-                <View style={styles.container}>
-                    <Video
-                    ref={VideoRef}
-                    source={{uri:videoURL}}
-                    muted={false}
-                    controls={true}
-                    style={styles.video}
-                    fullscreenOrientation="landscape"
-                    onFullscreenPlayerWillPresent={onFullscreenPlayerWillPresent}
-                    onFullscreenPlayerDidDismiss={onFullscreenPlayerWillDismiss}
-                    />
-                </View>
-                :
-                <View style={styles.container}>
-                    <ActivityIndicator size={50} color={'white'} />
-                </View>
+                    <View style={[styles.container]}>
+                        <TouchableOpacity onPress={() => setClicked(!clicked)}>
+                            <Video
+                                ref={VideoRef}
+                                source={{ uri: videoURL }}
+                                muted={false}
+                                onProgress={(x) => setProgress(x)}
+                                controls={false}
+                                paused={paused}
+                                style={styles.video}
+                                fullscreenOrientation="landscape"
+                                resizeMode={isFullScreen?'cover':'contain'}
+                            />
+                            {
+                                clicked &&
+                                <TouchableOpacity style={{ height: '100%', width: '100%', position: 'absolute', backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'space-evenly', flexDirection: 'column' }}>
+                                    <View style={{ flex: 1, flexDirection: "row", justifyContent: 'space-evenly', alignItems: 'center', width: "100%" }}>
+
+                                        <TouchableOpacity onPress={() => {
+                                            VideoRef.current.seek(parseInt(progress.currentTime) - 10)
+                                        }}>
+                                            <Image source={require('./VideoIcons/backward.png')}
+                                                style={
+                                                    {
+                                                        height: 45, width: 45, tintColor: 'white'
+                                                    }
+                                                }
+                                            />
+                                        </TouchableOpacity>
+
+
+                                        <TouchableOpacity onPress={() => setPaused(!paused)}>
+                                            <Image source={paused ? require('./VideoIcons/play-button.png') : require('./VideoIcons/pause.png')}
+                                                style={
+                                                    {
+                                                        height: 45, width: 45, tintColor: 'white'
+                                                    }
+                                                }
+                                            />
+                                        </TouchableOpacity>
+
+
+                                        <TouchableOpacity onPress={() => {
+                                            VideoRef.current.seek(parseInt(progress.currentTime) + 10)
+                                        }}>
+                                            <Image source={require('./VideoIcons/forward.png')}
+                                                style={
+                                                    {
+                                                        height: 45, width: 45, tintColor: 'white'
+                                                    }
+                                                }
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'row',alignItems:'center', position: 'absolute', bottom: isFullScreen?'20%':'8%', padding: 15}}>
+                                        <Text style={{ color: 'white', fontSize: 15 }}>{format(progress.currentTime)}</Text>
+                                        <Slider
+                                            style={{ width: '80%', height: 40 }}
+                                            minimumValue={0}
+                                            maximumValue={progress.seekableDuration}
+                                            minimumTrackTintColor="#FFFFFF"
+                                            maximumTrackTintColor="#fff"
+                                            onValueChange={(x) => {
+                                                VideoRef.current.seek(x);
+                                            } }
+                                        />
+                                        <Text style={{ color: 'white', fontSize: 15 }}>{format(progress.seekableDuration)}</Text>
+                                    </View>
+                                    <View style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'row',alignItems:'center', position: 'absolute', top: isFullScreen?'18%':'11%', padding: 15}}>
+                                        <TouchableOpacity onPress={() => {
+                                            setIsFullScreen(!isFullScreen);
+                                            if(isFullScreen){
+                                                Orientation.lockToPortrait();
+                                            }
+                                            else{
+                                                Orientation.lockToLandscape();
+                                            }
+                                        }}>
+                                        <Image source={isFullScreen?require('./VideoIcons/minimize.png'):require('./VideoIcons/full-size.png')} style={{height:35,width:35,tintColor:'white'}} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </TouchableOpacity>
+                            }
+                        </TouchableOpacity>
+                    </View>
+                    :
+                    <View style={styles.container}>
+                        <ActivityIndicator size={50} color={'white'} />
+                    </View>
             }
         </>
     )
@@ -75,32 +138,18 @@ const VideoScreen = (props) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex:1,
+        height:'100%',
+        width:'100%',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'black'
     },
     video: {
-        width:windowWidth,
-        height:windowHeight,
-        backgroundColor:'black',
+        width: windowWidth,
+        height: windowHeight,
+        backgroundColor: 'black',
     },
-    controlIcon: {
-        height: 75,
-        width: 75,
-        borderRadius: 37.5,
-        backgroundColor: 'white',
-        margin: 10,
-    },
-    overlay:{
-        position:'absolute',
-        top:0,
-        left:0,
-        bottom:0,
-        right:0,
-        justifyContent:'space-between',
-        backgroundColor:'#000000c4'
-    }
 });
 
 export default VideoScreen;

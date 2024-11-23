@@ -23,6 +23,7 @@ const AnimeNavigation = () => {
         <Stack.Navigator screenOptions={{
             headerShown:false,
             cardStyleInterpolator:fadeTransition,
+            presentation:'transparentModal',
         }}>
             <Stack.Screen component={AnimeScreen} name="AnimeScreen" />
             <Stack.Screen component={VideoScreen} name="VideoScreen" />

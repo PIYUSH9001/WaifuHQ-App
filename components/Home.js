@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableNativeFeedback, View } from "react-native";
 import ShowCard from "./Card";
 import Card from "./Card";
+import Orientation from "react-native-orientation-locker";
 
 const HomeScreen = (props) => {
     const styles = StyleSheet.create({
@@ -31,6 +32,7 @@ const HomeScreen = (props) => {
         }
     }
     useEffect(() => {
+        Orientation.lockToPortrait();
         Fetchdata();
     },[])
     return (

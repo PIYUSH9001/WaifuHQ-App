@@ -19,6 +19,7 @@ const HomeToAnimeNavigation = (props) => {
             <Stack.Navigator screenOptions={{
                 headerShown:false,
                 cardStyleInterpolator:fadeTransition,
+                presentation:'transparentModal',
             }}>
                 <Stack.Screen component={HomeScreen} name="Home" initialParams={{key}}/>
                 <Stack.Screen component={AnimeNavigation} name="AnimeNavigation" />
